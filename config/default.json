@@ -1,4 +1,4 @@
 {
-  "mongoURI": "",
+  "mongoURI": "mongodb+srv://johnny1:@cinema24-pnijq.mongodb.net/test?retryWrites=true&w=majority",
   "jwtSecret": "bequiettoken"
 }
