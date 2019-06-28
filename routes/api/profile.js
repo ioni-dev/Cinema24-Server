@@ -174,11 +174,25 @@ router.delete('/lists/:list_id', auth, async (req, res) => {
 // @route     GET api/profile/lists/:list_id
 // @desc      Get movies from list 
 // @access    Public
-router.get('/profile/lists/:list_id', (req, res) => {
+router.get('/profile/lists/:list_id', async (req, res) => {
     try {
-        const options = {
-            uri: `https://`
-        }
+        const movies = await lists.movies.map(elem => elem);
+        const moviesRequest = {
+
+            uri: `https://api.themoviedb.org/3/search/movie?api_key=${config.get('movieSecret')}&query=${movies}`,
+            method: 'GET',
+            headers: { 'user-agent': 'node.js' }
+        };
+
+        request(moviesRequest, (error, response, body) => {
+            if (error) console.error(error);
+
+            if (response.statusCode !== 200) {
+                return res.status(404).json({ msg: 'No  movies' });
+            }
+
+            res.json(JSON.parse(body));
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
