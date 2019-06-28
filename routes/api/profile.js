@@ -1,4 +1,6 @@
 const express = require("express");
+const request = require('request');
+const config = require('config');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 
@@ -110,8 +112,8 @@ router.delete('/', auth, async (req, res) => {
     }
 });
 
-// @route     PUT api/profile/collections
-// @desc      Add collections to profile
+// @route     PUT api/profile/lists
+// @desc      Add list to profile
 // @access    Private
 router.put('/lists', [auth, [
     check('title', 'Title is required').not().isEmpty(),
@@ -150,5 +152,36 @@ router.put('/lists', [auth, [
     }
 })
 
+// @route     DELETE api/profile/lists/:list_id
+// @desc      Delete list from profile
+// @access    Private
+router.delete('/lists/:list_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.user.id });
+        // Get remove index 
+        const removeIndex = profile.lists.map(item => item.id).indexOf(req.params.lists_id);
+        // Remove 
+        profile.lists.splice(removeIndex, 1);
 
+        await profile.save();
+        res.json(profile);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send('Server Error');
+    }
+})
+
+// @route     GET api/profile/lists/:list_id
+// @desc      Get movies from list 
+// @access    Public
+router.get('/profile/lists/:list_id', (req, res) => {
+    try {
+        const options = {
+            uri: `https://`
+        }
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+})
 module.exports = router;
